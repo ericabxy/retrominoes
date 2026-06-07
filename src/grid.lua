@@ -57,8 +57,6 @@ end
 
 function grid:draw(offset_x, offset_y)
   offset_x, offset_y = offset_x or 0, offset_y or 0
-  love.graphics.setColor(85, 85, 85)
-  love.graphics.rectangle('fill', offset_x * 16, offset_y * 16, self.xcount * 16, self.ycount * 16)
   for y = 1, self.ycount do
     for x = 1, self.xcount do
       if self.blocks[y][x] then

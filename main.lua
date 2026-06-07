@@ -1,3 +1,5 @@
+local font = require('src.rom_buch_breakout_set_imagefont')
+local font2 = require('src.rom_buch_arcade_pack_imagefont')
 local _ = require('src.const_libretro')
 local _ = require('src.const_berbasoft')
 local block = require('src.block')
@@ -7,36 +9,70 @@ local rom_ragnar_random_fakebit_chiptune_music_pack = require('src.rom_ragnar_ra
 local sequence = require('src.sequence')
 
 local CONTROLLER_NUMBER = 1
+local hiscore = 0
+local score = 0
 local thispiece = false
 local nextpiece = sequence:new()
 
 function love.load()
-  inert = grid:new()
+  love.graphics.setBackgroundColor(27, 38, 50)
+  grid_of_inert_blocks = grid:new()
   
   timer = 0
   timer_limit = 0.5
+
+  hiscore = math.max(hiscore, score)
+  score = 0
 end
 
 function love.update(dt)
+  -- Execute no game logic if game is not started.
   if not thispiece then return end
+  -- Increment drop timer by time elapsed.
   timer = timer + dt
-  if love.joystick.isDown(CONTROLLER_NUMBER, RETRO_DEVICE_ID_JOYPAD_DOWN) then timer = timer + dt * 5 end
+  -- Speed up timer if DOWN button is held.
+  if love.joystick.isDown(CONTROLLER_NUMBER, RETRO_DEVICE_ID_JOYPAD_DOWN) then
+    timer = timer + dt * 5
+  end
   if timer >= timer_limit then
     timer = 0
     
-    if not thispiece:drop_one_row(inert) then
+    if not thispiece:drop_one_row(grid_of_inert_blocks) then
       rom_sound_effects_8_bit_style:piece_drop()
-      inert:affix_piece(thispiece)
+      grid_of_inert_blocks:affix_piece(thispiece)
       thispiece = nextpiece:pop()
     end
   end
-  if inert:clear_completed_rows() then rom_sound_effects_8_bit_style:line_clear() end
+  if grid_of_inert_blocks:clear_completed_rows() then rom_sound_effects_8_bit_style:line_clear() end
 end
 
 function love.draw()
-  inert:draw(5, 0)
-  if not thispiece then return end
-  thispiece:draw(5, 0)
+  grid_of_inert_blocks:draw(5, 0)
+  if thispiece then thispiece:draw(5, 0) end
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.setFont(font2)
+  love.graphics.printf([[
+FFFF800000000002FBBB
+FFFF800000000002D000
+FFFF800000000002D000
+FFFF800000000002D000
+FFFF800000000002D000
+FFFF800000000002FEEE
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+  ]], 0, 0, 319, 'left')
+  love.graphics.setFont(font)
+  love.graphics.print('HISCORE', 272, 24)
+  love.graphics.print(hiscore, 272, 33)
+  love.graphics.print('SCORE', 272, 56)
+  love.graphics.print(score, 272, 65)
 end
 
 function love.joystickpressed(n, b)
@@ -47,23 +83,23 @@ function love.joystickpressed(n, b)
   end
   if not thispiece then return end
   if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) then
-    thispiece:rotate_counterclockwise(inert)
+    thispiece:rotate_counterclockwise(grid_of_inert_blocks)
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_DOWN then
     local testy = thispiece.y + 1
-    if thispiece:can_move(thispiece.x, testy, inert) then
+    if thispiece:can_move(thispiece.x, testy, grid_of_inert_blocks) then
       thispiece.y = testy
     end
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_LEFT then
     local testx = thispiece.x - 1
-    if thispiece:can_move(testx, thispiece.y, inert) then
+    if thispiece:can_move(testx, thispiece.y, grid_of_inert_blocks) then
       thispiece.x = testx
     end
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_RIGHT then
     local testx = thispiece.x + 1
-    if thispiece:can_move(testx, thispiece.y, inert) then
+    if thispiece:can_move(testx, thispiece.y, grid_of_inert_blocks) then
       thispiece.x = testx
     end
   elseif n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_A or b == RETRO_DEVICE_ID_JOYPAD_Y) then
-    thispiece:rotate_clockwise(inert)
+    thispiece:rotate_clockwise(grid_of_inert_blocks)
   end
 end
