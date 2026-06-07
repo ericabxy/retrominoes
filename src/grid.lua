@@ -1,11 +1,13 @@
 local block = require('src.block')
 
+-- Class table.
 local grid = {
   xcount = 10,
   ycount = 15,
   blocks = {},
 }
 
+-- Initialization
 function grid:init()
   for y = 1, self.ycount do
     self.blocks[y] = {}
@@ -14,6 +16,18 @@ function grid:init()
     end
   end
   return self
+end
+
+-- Transfer an active piece to the fixed grid.
+function grid:affix_piece(p)
+  for y = 1, p.ycount do
+    for x = 1, p.xcount do
+      local thisblock = p:get_block_at(x, y)
+      if thisblock then
+        self.blocks[p.y + y][p.x + x] = thisblock
+      end
+    end
+  end
 end
 
 function grid:clear_completed_rows()

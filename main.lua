@@ -26,14 +26,7 @@ function love.update(dt)
     
     if not thispiece:drop_one_row(inert) then
       rom_sound_effects_8_bit_style:piece_drop()
-      for y = 1, thispiece.ycount do
-        for x = 1, thispiece.xcount do
-          local thisblock = thispiece:get_block_at(x, y)
-          if thisblock then
-            inert.blocks[thispiece.y + y][thispiece.x + x] = thisblock
-          end
-        end
-      end
+      inert:affix_piece(thispiece)
       thispiece = nextpiece:pop()
     end
   end
