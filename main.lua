@@ -24,10 +24,7 @@ function love.update(dt)
   if timer >= timer_limit then
     timer = 0
     
-    local testy = thispiece.y + 1
-    if thispiece:can_move(thispiece.x, testy, inert) then
-      thispiece.y = testy
-    else
+    if not thispiece:drop_one_row(inert) then
       rom_sound_effects_8_bit_style:piece_drop()
       for y = 1, thispiece.ycount do
         for x = 1, thispiece.xcount do
@@ -56,12 +53,8 @@ function love.joystickpressed(n, b)
     rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(true)
   end
   if not thispiece then return end
-  if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_Y) then
-    rom_sound_effects_8_bit_style:piece_rotate()
-    thispiece.rotation = thispiece.rotation - 1
-    if thispiece.rotation < 1 then
-      thispiece.rotation = #thispiece.structures
-    end
+  if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) then
+    thispiece:rotate_counterclockwise(inert)
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_DOWN then
     local testy = thispiece.y + 1
     if thispiece:can_move(thispiece.x, testy, inert) then
@@ -77,11 +70,7 @@ function love.joystickpressed(n, b)
     if thispiece:can_move(testx, thispiece.y, inert) then
       thispiece.x = testx
     end
-  elseif n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_A or b == RETRO_DEVICE_ID_JOYPAD_X) then
-    rom_sound_effects_8_bit_style:piece_rotate()
-    thispiece.rotation = thispiece.rotation + 1
-    if thispiece.rotation > #thispiece.structures then
-      thispiece.rotation = 1
-    end
+  elseif n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_A or b == RETRO_DEVICE_ID_JOYPAD_Y) then
+    thispiece:rotate_clockwise(inert)
   end
 end

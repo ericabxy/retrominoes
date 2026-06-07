@@ -1,3 +1,4 @@
+local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
 local block = require('src.block')
 
 local EMPTY = ' '
@@ -25,11 +26,12 @@ local piece = {
   y = -1,
 }
 
-function piece:can_move(test_x, test_y, inert)
-  for y = 1, #self.structures[self.rotation] do
-    for x = 1, #self.structures[self.rotation][y] do
-      if self.structures[self.rotation][y][x] ~= EMPTY
-        and not inert:is_empty_at(test_x + x, test_y + y)
+function piece:can_move(test_x, test_y, grid, r)
+  r = r or self.rotation
+  for y = 1, #self.structures[r] do
+    for x = 1, #self.structures[r][y] do
+      if self.structures[r][y][x] ~= EMPTY
+        and not grid:is_empty_at(test_x + x, test_y + y)
       then
         return false
       end
@@ -52,9 +54,37 @@ function piece:draw(offset_x, offset_y)
   end
 end
 
+function piece:drop_one_row(grid)
+  local testy = self.y + 1
+  if self:can_move(self.x, testy, grid) then
+    self.y = testy
+    return true
+  end
+end
+
 function piece:get_block_at(x, y)
   if self.structures[self.rotation][y][x] == ' ' then return end
   return block:new{ letter = self.structures[self.rotation][y][x], hue = self.hue }
+end
+
+function piece:rotate_clockwise(grid)
+  local testr = self.rotation + 1
+  if testr > #self.structures then testr = 1 end
+  if self:can_move(self.x, self.y, grid, testr) then
+    rom_sound_effects_8_bit_style:piece_rotate()
+    self.rotation = testr
+    return true
+  end
+end
+
+function piece:rotate_counterclockwise(grid)
+  local testr = self.rotation - 1
+  if testr < 1 then testr = #self.structures end
+  if self:can_move(self.x, self.y, grid, testr) then
+    rom_sound_effects_8_bit_style:piece_rotate()
+    self.rotation = testr
+    return true
+  end
 end
 
 function piece:new(o)
