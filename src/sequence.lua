@@ -1,3 +1,4 @@
+local rom_imagefonts = require('src.rom_imagefonts')
 local ellpiece = require('src.ellpiece')
 local ohhpiece = require('src.ohhpiece')
 local jaypiece = require('src.jaypiece')
@@ -6,8 +7,23 @@ local zeepiece = require('src.zeepiece')
 local teepiece = require('src.teepiece')
 local eyepiece = require('src.eyepiece')
 
+local CHARMAP = [[
+0BB0
+D00C
+D00C
+D00C
+D00C
+D00C
+D00C
+D00C
+D00C
+0EE0
+]]
+
 local sequence = {
   pieces = {},
+  x = 256,
+  y = -16,
 }
 
 function sequence:init()
@@ -21,11 +37,14 @@ function sequence:init()
   return self
 end
 
-function sequence:paint(ox, oy)
-  ox, oy = ox or 0, oy or 0
+function sequence:paint()
+  love.graphics.setFont(rom_imagefonts[2])
+  love.graphics.printf(CHARMAP, self.x, self.y, 64 - 1, 'left')
+  love.graphics.setFont(rom_imagefonts[1])
+  love.graphics.print('NEXT', self.x + 20, self.y + 16)
   for x = #self.pieces, 1, -1 do
     local y = (#self.pieces - x) * 16
-    self.pieces[x]:paint_icon(ox, oy + y)
+    self.pieces[x]:paint_icon(self.x + 24, self.y + 28 + y)
   end
 end
 

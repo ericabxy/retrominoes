@@ -55,6 +55,14 @@ function ram_sound_system.piece_drop()
   if sfx_enabled and not rom_sound_effects.sound_neutral6:isPlaying() then love.audio.play(rom_sound_effects.sound_neutral6) end
 end
 
+function ram_sound_system.toggle_settings(is_playing)
+  if bgm_enabled and sfx_enabled then ram_sound_system.enable_music(false, is_playing)
+  elseif not bgm_enabled and sfx_enabled then ram_sound_system.enable_sound(false)
+  elseif not bgm_enabled and not sfx_enabled then ram_sound_system.enable_music(true, is_playing)
+  elseif bgm_enabled and not sfx_enabled then ram_sound_system.enable_sound(true)
+  end
+end
+
 function ram_sound_system.draw()
   love.graphics.setFont(rom_imagefonts[2])
   love.graphics.printf(CHARMAP, ram_sound_system.x, ram_sound_system.y, 80 - 1, 'left')

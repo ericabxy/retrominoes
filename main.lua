@@ -1,12 +1,10 @@
 local _ = require('src.const_libretro')
 local _ = require('src.const_berbasoft')
+local ram_sound_system = require('src.ram_sound_system')
 local rom_imagefonts = require('src.rom_imagefonts')
 local block = require('src.block')
 local grid = require('src.grid')
-local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
-local rom_ragnar_random_fakebit_chiptune_music_pack = require('src.rom_ragnar_random_fakebit_chiptune_music_pack')
 local sequence = require('src.sequence')
-local ram_sound_system = require('src.ram_sound_system')
 
 local CONTROLLER_NUMBER = 1
 local TIMER_LIMIT = 0.5
@@ -59,7 +57,6 @@ function love.draw()
   grid_of_inert_blocks:draw(5, -3)
   if thispiece then thispiece:draw(5, -3) end
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print('NEXT', 276, 0)
   nextpiece:paint(280, 12)
   ram_sound_system.draw()
 end
@@ -68,11 +65,7 @@ function love.joystickpressed(n, b)
   n, b = n + 1, b + 1
   if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) and thispiece then thispiece:reverse(grid_of_inert_blocks)
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_SELECT then
-    if ram_sound_system.bgm_enabled and ram_sound_system.sfx_enabled then ram_sound_system.enable_music(false, thispiece)
-    elseif not ram_sound_system.bgm_enabled and ram_sound_system.sfx_enabled then ram_sound_system.enable_sound(false)
-    elseif not ram_sound_system.bgm_enabled and not ram_sound_system.sfx_enabled then ram_sound_system.enable_music(true, thispiece)
-    elseif ram_sound_system.bgm_enabled and not ram_sound_system.sfx_enabled then ram_sound_system.enable_sound(true)
-    end
+    ram_sound_system.toggle_settings(thispiece)
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_START and not thispiece then restart_game()
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_DOWN and thispiece then
     if thispiece:move_down(grid_of_inert_blocks) then timer = 0 end
