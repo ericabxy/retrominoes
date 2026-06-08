@@ -21,9 +21,12 @@ function sequence:init()
   return self
 end
 
-function sequence:paint()
-  love.graphics.setColor(170, 55, 55)
-  love.graphics.rectangle('fill', 0, 0, 8, 8)
+function sequence:paint(ox, oy)
+  ox, oy = ox or 0, oy or 0
+  for x = #self.pieces, 1, -1 do
+    local y = (#self.pieces - x) * 16
+    self.pieces[x]:paint_icon(ox, oy + y)
+  end
 end
 
 function sequence:pop()

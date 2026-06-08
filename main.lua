@@ -9,20 +9,26 @@ local rom_ragnar_random_fakebit_chiptune_music_pack = require('src.rom_ragnar_ra
 local sequence = require('src.sequence')
 
 local CONTROLLER_NUMBER = 1
+local TIMER_LIMIT = 0.5
+local timer = 0
 local hiscore = 0
 local score = 0
 local thispiece = false
 local nextpiece = sequence:new()
+local grid_of_inert_blocks = grid:new()
+
+function restart_game()
+  rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(true)
+  grid_of_inert_blocks = grid:new()
+  hiscore = math.max(score, hiscore)
+  nextpiece = sequence:new()
+  score = 0
+  timer = 0
+  thispiece = nextpiece:pop()
+end
 
 function love.load()
   love.graphics.setBackgroundColor(27, 38, 50)
-  grid_of_inert_blocks = grid:new()
-  
-  timer = 0
-  timer_limit = 0.5
-
-  hiscore = math.max(hiscore, score)
-  score = 0
 end
 
 function love.update(dt)
@@ -34,7 +40,7 @@ function love.update(dt)
   if love.joystick.isDown(CONTROLLER_NUMBER, RETRO_DEVICE_ID_JOYPAD_DOWN) then
     timer = timer + dt * 5
   end
-  if timer >= timer_limit then
+  if timer >= TIMER_LIMIT then
     timer = 0
     
     if not thispiece:drop_one_row(grid_of_inert_blocks) then
@@ -47,7 +53,8 @@ function love.update(dt)
       end
     end
   end
-  if grid_of_inert_blocks:clear_completed_rows() then rom_sound_effects_8_bit_style:line_clear() end
+  local value = grid_of_inert_blocks:clear_completed_rows()
+  if value then score = score + value end
 end
 
 function love.draw()
@@ -56,14 +63,14 @@ function love.draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.setFont(font2)
   love.graphics.printf([[
-000F800000000002FBBB
-000F800000000002D000
-000F800000000002D000
-000F800000000002D000
-000F800000000002D000
-000F800000000002FEEE
-000F800000000002FFFF
-FFFF800000000002FFFF
+D00F800000000002FBBB
+D00F800000000002D000
+D00F800000000002D000
+D00F800000000002D000
+D00F800000000002D000
+D00F800000000002FEEE
+D00F800000000002FFFF
+FEEF800000000002FFFF
 FFFF800000000002FFFF
 FFFF800000000002FFFF
 FFFF800000000002FFFF
@@ -76,14 +83,14 @@ FFFF800000000002FFFF
   love.graphics.print('HISCORE', 272, 24)
   love.graphics.print(hiscore, 272, 33)
   love.graphics.print('SCORE', 272, 56)
-  love.graphics.print(grid_of_inert_blocks.score, 272, 65)
+  love.graphics.print(score, 272, 65)
+  nextpiece:paint(24, 0)
 end
 
 function love.joystickpressed(n, b)
   n, b = n + 1, b + 1
   if n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_START then
-    if not thispiece then thispiece = nextpiece:pop() end
-    rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(true)
+    if not thispiece then restart_game() end
   end
   if not thispiece then return end
   if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) then

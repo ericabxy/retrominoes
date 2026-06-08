@@ -67,6 +67,19 @@ function piece:get_block_at(x, y)
   return block:new{ letter = self.structures[self.rotation][y][x], hue = self.hue }
 end
 
+function piece:paint_icon(ox, oy)
+  ox, oy = ox or 0, oy or 0
+  for y = 1, #self.structures[self.rotation] do
+    for x = 1, #self.structures[self.rotation][y] do
+      local letter = self.structures[self.rotation][y][x]
+      if letter ~= ' ' then
+        love.graphics.setColor(self.color)
+        love.graphics.rectangle('fill', ox + (x - 1) * 4, oy + (y - 1) * 4, 4, 4)
+      end
+    end
+  end
+end
+
 function piece:rotate_clockwise(grid)
   local testr = self.rotation + 1
   if testr > #self.structures then testr = 1 end

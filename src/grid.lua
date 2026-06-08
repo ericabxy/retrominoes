@@ -32,6 +32,7 @@ function grid:affix_piece(p)
 end
 
 function grid:clear_completed_rows()
+  local totalscore = 0
   local accumulator = 2
   local blocks_cleared = 0
   local multiplier = 4
@@ -53,13 +54,13 @@ function grid:clear_completed_rows()
       end
       for remove_x = 1, self.xcount do
         self.blocks[1][remove_x] = nil
-        self.score = self.score + multiplier
+        totalscore = totalscore + multiplier
       end
       multiplier = multiplier + accumulator
       accumulator = accumulator * 7
     end
   end
-  return complete
+  return totalscore
 end
 
 function grid:draw(offset_x, offset_y)
