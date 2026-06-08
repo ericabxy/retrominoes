@@ -67,6 +67,29 @@ function piece:get_block_at(x, y)
   return block:new{ letter = self.structures[self.rotation][y][x], hue = self.hue }
 end
 
+function piece:move_down(grid)
+  local testy = self.y + 1
+  if self:can_move(self.x, testy, grid) then
+    self.y = testy
+    return true
+  end
+end
+
+function piece:move_left(grid)
+  local testx = self.x - 1
+  if self:can_move(self.x - 1, self.y, grid) then
+    self.x = self.x - 1
+    return true
+  end
+end
+
+function piece:move_right(grid)
+  if self:can_move(self.x + 1, self.y, grid) then
+    self.x = self.x + 1
+    return true
+  end
+end
+
 function piece:paint_icon(ox, oy)
   ox, oy = ox or 0, oy or 0
   for y = 1, #self.structures[self.rotation] do
@@ -80,7 +103,8 @@ function piece:paint_icon(ox, oy)
   end
 end
 
-function piece:rotate_clockwise(grid)
+-- Rotate counterclockwise (widderschynnes).
+function piece:reverse(grid)
   local testr = self.rotation + 1
   if testr > #self.structures then testr = 1 end
   if self:can_move(self.x, self.y, grid, testr) then
@@ -90,7 +114,8 @@ function piece:rotate_clockwise(grid)
   end
 end
 
-function piece:rotate_counterclockwise(grid)
+-- Rotate clockwise (deosil).
+function piece:rotate(grid)
   local testr = self.rotation - 1
   if testr < 1 then testr = #self.structures end
   if self:can_move(self.x, self.y, grid, testr) then

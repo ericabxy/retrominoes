@@ -1,11 +1,33 @@
+local rom_imagefonts = require('src.rom_imagefonts')
+local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
 local block = require('src.block')
+
+local CLEARVALUES = { 40, 100, 300, 1200 }
+local CHARMAP = [[
+000C800000000002D00C
+000C800000000002D00C
+000C800000000002D00C
+EEEF800000000002D00C
+FFFF800000000002D00C
+FFFF800000000002D00C
+FFFF800000000002D00C
+FFFF800000000002D00C
+FFFF800000000002FEEF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+FFFF800000000002FFFF
+BBBF800000000002F000
+000C800000000002F000
+000C800000000002FFFF
+]]
 
 -- Class table.
 local grid = {
+  current_score = 0,
+  highest_score = 0,
   xcount = 10,
   ycount = 18,
   blocks = {},
-  score = 0,
 }
 
 -- Initialization
@@ -32,10 +54,7 @@ function grid:affix_piece(p)
 end
 
 function grid:clear_completed_rows()
-  local totalscore = 0
-  local accumulator = 2
-  local blocks_cleared = 0
-  local multiplier = 4
+  local lines_cleared = 0
   local complete
   for y = 1, self.ycount do
     complete = true
@@ -54,16 +73,25 @@ function grid:clear_completed_rows()
       end
       for remove_x = 1, self.xcount do
         self.blocks[1][remove_x] = nil
-        totalscore = totalscore + multiplier
       end
-      multiplier = multiplier + accumulator
-      accumulator = accumulator * 7
+      lines_cleared = lines_cleared + 1
     end
+  end
+  if complete then
+    rom_sound_effects_8_bit_style:line_clear()
+    self.current_score = self.current_score + CLEARVALUES[lines_cleared]
   end
   return totalscore
 end
 
 function grid:draw(offset_x, offset_y)
+  love.graphics.setFont(rom_imagefonts[2])
+  love.graphics.printf(CHARMAP, 0, 0, 319, 'left')
+  love.graphics.setFont(rom_imagefonts[1])
+  love.graphics.print('HISCORE', 0, 0)
+  love.graphics.print(self.highest_score, 0, 9)
+  love.graphics.print('SCORE', 0, 24)
+  love.graphics.print(self.current_score, 0, 33)
   offset_x, offset_y = offset_x or 0, offset_y or 0
   for y = 1, self.ycount do
     for x = 1, self.xcount do
