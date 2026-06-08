@@ -6,6 +6,7 @@ local grid = require('src.grid')
 local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
 local rom_ragnar_random_fakebit_chiptune_music_pack = require('src.rom_ragnar_random_fakebit_chiptune_music_pack')
 local sequence = require('src.sequence')
+local ram_sound_system = require('src.ram_sound_system')
 
 local CONTROLLER_NUMBER = 1
 local TIMER_LIMIT = 0.5
@@ -19,10 +20,10 @@ local nextpiece = sequence:new()
 local grid_of_inert_blocks = grid:new()
 
 function restart_game()
-  grid_of_inert_blocks = grid:new{ highest_score = math.max(grid_of_inert_blocks.highest_score, grid_of_inert_blocks.current_score) }
   timer = 0
+  grid_of_inert_blocks = grid:new{ highest_score = math.max(grid_of_inert_blocks.highest_score, grid_of_inert_blocks.current_score) }
   thispiece = nextpiece:pop()
-  rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(player_settings_music)
+  ram_sound_system.start_music()
 end
 
 function love.load()
@@ -42,11 +43,11 @@ function love.update(dt)
     timer = 0
     
     if not thispiece:drop_one_row(grid_of_inert_blocks) then
-      rom_sound_effects_8_bit_style:piece_drop()
+      ram_sound_system.piece_drop()
       grid_of_inert_blocks:affix_piece(thispiece)
       thispiece = nextpiece:pop()
       if not thispiece:can_move(thispiece.x, thispiece.y, grid_of_inert_blocks) then
-        rom_ragnar_random_fakebit_chiptune_music_pack.bgm1(false)
+        ram_sound_system.stop_music()
         thispiece = false
       end
     end
@@ -58,26 +59,20 @@ function love.draw()
   grid_of_inert_blocks:draw(5, -3)
   if thispiece then thispiece:draw(5, -3) end
   love.graphics.setColor(255, 255, 255)
-  love.graphics.setFont(rom_imagefonts[1])
-  love.graphics.print('MUSIC ' .. player_settings_music_string, 0, 216)
-  love.graphics.print('SOUND ' .. player_settings_sound_string, 0, 225)
   love.graphics.print('NEXT', 276, 0)
   nextpiece:paint(280, 12)
+  ram_sound_system.draw()
 end
 
 function love.joystickpressed(n, b)
   n, b = n + 1, b + 1
   if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) and thispiece then thispiece:reverse(grid_of_inert_blocks)
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_SELECT then
-    if player_settings_music and player_settings_sound then player_settings_music = false
-    elseif not player_settings_music and player_settings_sound then player_settings_sound = false
-    elseif not player_settings_music and not player_settings_sound then player_settings_music = true
-    elseif player_settings_music and not player_settings_sounds then player_settings_sound = true
+    if ram_sound_system.bgm_enabled and ram_sound_system.sfx_enabled then ram_sound_system.enable_music(false, thispiece)
+    elseif not ram_sound_system.bgm_enabled and ram_sound_system.sfx_enabled then ram_sound_system.enable_sound(false)
+    elseif not ram_sound_system.bgm_enabled and not ram_sound_system.sfx_enabled then ram_sound_system.enable_music(true, thispiece)
+    elseif ram_sound_system.bgm_enabled and not ram_sound_system.sfx_enabled then ram_sound_system.enable_sound(true)
     end
-    rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(thispiece and player_settings_music)
-    rom_sound_effects_8_bit_style:enable_sounds(player_settings_sound)
-    player_settings_music_string = player_settings_music and 'ON' or 'NO'
-    player_settings_sound_string = player_settings_sound and 'ON' or 'NO'
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_START and not thispiece then restart_game()
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_DOWN and thispiece then
     if thispiece:move_down(grid_of_inert_blocks) then timer = 0 end

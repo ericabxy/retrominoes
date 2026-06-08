@@ -1,5 +1,5 @@
 local rom_imagefonts = require('src.rom_imagefonts')
-local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
+local ram_sound_system = require('src.ram_sound_system')
 local block = require('src.block')
 
 local CLEARVALUES = { 40, 100, 300, 1200 }
@@ -78,7 +78,7 @@ function grid:clear_completed_rows()
     end
   end
   if complete then
-    rom_sound_effects_8_bit_style:line_clear()
+    ram_sound_system.line_clear()
     self.current_score = self.current_score + CLEARVALUES[lines_cleared]
   end
   return totalscore
@@ -100,6 +100,10 @@ function grid:draw(offset_x, offset_y)
       end
     end
   end
+end
+
+function grid:grey_out_block_at(x, y)
+  local thisblock = self.blocks[y][x]
 end
 
 function grid:is_empty_at(x, y)

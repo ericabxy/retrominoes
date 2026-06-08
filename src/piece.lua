@@ -1,4 +1,4 @@
-local rom_sound_effects_8_bit_style = require('src.rom_sound_effects_8_bit_style')
+local ram_sound_system = require('src.ram_sound_system')
 local block = require('src.block')
 
 local EMPTY = ' '
@@ -108,7 +108,7 @@ function piece:reverse(grid)
   local testr = self.rotation + 1
   if testr > #self.structures then testr = 1 end
   if self:can_move(self.x, self.y, grid, testr) then
-    rom_sound_effects_8_bit_style:piece_rotate()
+    ram_sound_system.piece_rotate()
     self.rotation = testr
     return true
   end
@@ -119,7 +119,7 @@ function piece:rotate(grid)
   local testr = self.rotation - 1
   if testr < 1 then testr = #self.structures end
   if self:can_move(self.x, self.y, grid, testr) then
-    rom_sound_effects_8_bit_style:piece_rotate()
+    ram_sound_system:piece_rotate()
     self.rotation = testr
     return true
   end

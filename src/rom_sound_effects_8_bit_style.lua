@@ -1,24 +1,5 @@
-local sound_neutral6 = love.audio.newSource('share/sfx_sound_neutral6.wav', 'static')
-local sound_neutral8 = love.audio.newSource('share/sfx_sound_neutral8.wav', 'static')
-local sound_neutral11 = love.audio.newSource('share/sfx_sound_neutral11.wav', 'static')
-local sfx_enabled = true
-
-local rom_sound_effects_8_bit_style = {}
-
-function rom_sound_effects_8_bit_style:enable_sounds(b)
-  sfx_enabled = b and true or false
-end
-
-function rom_sound_effects_8_bit_style:line_clear()
-  if sfx_enabled and not sound_neutral11:isPlaying() then love.audio.play(sound_neutral11) end
-end
-
-function rom_sound_effects_8_bit_style:piece_rotate()
-  if sfx_enabled and not sound_neutral8:isPlaying() then love.audio.play(sound_neutral8) end
-end
-
-function rom_sound_effects_8_bit_style:piece_drop()
-  if sfx_enabled and not sound_neutral6:isPlaying() then love.audio.play(sound_neutral6) end
-end
-
-return rom_sound_effects_8_bit_style
+return {
+  sound_neutral6 = love.audio.newSource('share/sfx_sound_neutral6.wav', 'static'),
+  sound_neutral8 = love.audio.newSource('share/sfx_sound_neutral8.wav', 'static'),
+  sound_neutral11 = love.audio.newSource('share/sfx_sound_neutral11.wav', 'static')
+}
