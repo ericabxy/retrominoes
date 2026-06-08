@@ -103,7 +103,7 @@ function grid:clear_completed_rows()
       lines_cleared = lines_cleared + 1
     end
   end
-  if complete then
+  if lines_cleared > 0 then
     ram_sound_system.line_clear()
     self.current_score = self.current_score + CLEARVALUES[lines_cleared]
   end
