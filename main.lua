@@ -59,10 +59,12 @@ function love.update(dt)
 end
 
 function love.draw()
+  love.graphics.setColor(255, 255, 255)
   grid_of_inert_blocks:draw(5, -3)
   if thispiece then thispiece:draw(5, -3) end
-  love.graphics.setColor(255, 255, 255)
   nextpiece:paint(280, 12)
+  love.graphics.setFont(rom_imagefonts[1])
+  love.graphics.print('L   R', 274, 16)
   ram_sound_system.draw()
 end
 
