@@ -23,7 +23,7 @@ local piece = {
   xcount = 4,
   ycount = 4,
   x = 3,
-  y = -1,
+  y = 2,
 }
 
 function piece:can_move(test_x, test_y, grid, r)

@@ -41,24 +41,28 @@ function love.update(dt)
       rom_sound_effects_8_bit_style:piece_drop()
       grid_of_inert_blocks:affix_piece(thispiece)
       thispiece = nextpiece:pop()
+      if not thispiece:can_move(thispiece.x, thispiece.y, grid_of_inert_blocks) then
+        rom_ragnar_random_fakebit_chiptune_music_pack.bgm1(false)
+        thispiece = false
+      end
     end
   end
   if grid_of_inert_blocks:clear_completed_rows() then rom_sound_effects_8_bit_style:line_clear() end
 end
 
 function love.draw()
-  grid_of_inert_blocks:draw(5, 0)
-  if thispiece then thispiece:draw(5, 0) end
+  grid_of_inert_blocks:draw(5, -3)
+  if thispiece then thispiece:draw(5, -3) end
   love.graphics.setColor(255, 255, 255)
   love.graphics.setFont(font2)
   love.graphics.printf([[
-FFFF800000000002FBBB
-FFFF800000000002D000
-FFFF800000000002D000
-FFFF800000000002D000
-FFFF800000000002D000
-FFFF800000000002FEEE
-FFFF800000000002FFFF
+000F800000000002FBBB
+000F800000000002D000
+000F800000000002D000
+000F800000000002D000
+000F800000000002D000
+000F800000000002FEEE
+000F800000000002FFFF
 FFFF800000000002FFFF
 FFFF800000000002FFFF
 FFFF800000000002FFFF
@@ -72,7 +76,7 @@ FFFF800000000002FFFF
   love.graphics.print('HISCORE', 272, 24)
   love.graphics.print(hiscore, 272, 33)
   love.graphics.print('SCORE', 272, 56)
-  love.graphics.print(score, 272, 65)
+  love.graphics.print(grid_of_inert_blocks.score, 272, 65)
 end
 
 function love.joystickpressed(n, b)

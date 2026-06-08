@@ -3,8 +3,9 @@ local block = require('src.block')
 -- Class table.
 local grid = {
   xcount = 10,
-  ycount = 15,
+  ycount = 18,
   blocks = {},
+  score = 0,
 }
 
 -- Initialization
@@ -31,6 +32,9 @@ function grid:affix_piece(p)
 end
 
 function grid:clear_completed_rows()
+  local accumulator = 2
+  local blocks_cleared = 0
+  local multiplier = 4
   local complete
   for y = 1, self.ycount do
     complete = true
@@ -49,7 +53,10 @@ function grid:clear_completed_rows()
       end
       for remove_x = 1, self.xcount do
         self.blocks[1][remove_x] = nil
+        self.score = self.score + multiplier
       end
+      multiplier = multiplier + accumulator
+      accumulator = accumulator * 7
     end
   end
   return complete

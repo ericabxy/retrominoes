@@ -21,6 +21,11 @@ function sequence:init()
   return self
 end
 
+function sequence:paint()
+  love.graphics.setColor(170, 55, 55)
+  love.graphics.rectangle('fill', 0, 0, 8, 8)
+end
+
 function sequence:pop()
   local newpiece = table.remove(self.pieces)
   if #self.pieces == 0 then
