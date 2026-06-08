@@ -37,6 +37,13 @@ function sequence:pop()
   return newpiece
 end
 
+function sequence:rotate_queue(n)
+  for i = 1, n do
+    local pop = table.remove(self.pieces)
+    table.insert(self.pieces, 1, pop)
+  end
+end
+
 function sequence:new(o)
   o = o or {}
   setmetatable(o, self)
