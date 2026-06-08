@@ -22,7 +22,7 @@ local nextpiece = sequence:new()
 local grid_of_inert_blocks = grid:new()
 
 function restart_game()
-  rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(true)
+  rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(player_settings_music)
   grid_of_inert_blocks = grid:new()
   hiscore = math.max(score, hiscore)
   score = 0
@@ -68,9 +68,9 @@ function love.draw()
   love.graphics.printf([[
 000C800000000002D00C
 000C800000000002D00C
+000C800000000002D00C
 EEEF800000000002D00C
-000F800000000002D00C
-000F800000000002D00C
+FFFF800000000002D00C
 FFFF800000000002D00C
 FFFF800000000002D00C
 FFFF800000000002D00C
@@ -85,19 +85,29 @@ BBBF800000000002F000
   love.graphics.setFont(font)
   love.graphics.print('HISCORE', 0, 0)
   love.graphics.print(hiscore, 0, 9)
+  love.graphics.print('SCORE', 0, 24)
+  love.graphics.print(score, 0, 33)
   love.graphics.print('MUSIC ' .. player_settings_music_string, 0, 216)
   love.graphics.print('SOUND ' .. player_settings_sound_string, 0, 225)
-  love.graphics.print('SCORE', 0, 56)
-  love.graphics.print(score, 0, 65)
   love.graphics.print('NEXT', 276, 0)
   nextpiece:paint(280, 12)
 end
 
 function love.joystickpressed(n, b)
   n, b = n + 1, b + 1
-  if n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_START and not thispiece then restart_game() end
   if n == CONTROLLER_NUMBER and (b == RETRO_DEVICE_ID_JOYPAD_B or b == RETRO_DEVICE_ID_JOYPAD_X) and thispiece then
     thispiece:rotate_counterclockwise(grid_of_inert_blocks)
+  elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_SELECT then
+    if player_settings_music and player_settings_sound then player_settings_music = false
+    elseif not player_settings_music and player_settings_sound then player_settings_sound = false
+    elseif not player_settings_music and not player_settings_sound then player_settings_music = true
+    elseif player_settings_music and not player_settings_sounds then player_settings_sound = true
+    end
+    rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(thispiece and player_settings_music)
+    rom_sound_effects_8_bit_style:enable_sounds(player_settings_sound)
+    player_settings_music_string = player_settings_music and 'ON' or 'NO'
+    player_settings_sound_string = player_settings_sound and 'ON' or 'NO'
+  elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_START and not thispiece then restart_game()
   elseif n == CONTROLLER_NUMBER and b == RETRO_DEVICE_ID_JOYPAD_DOWN and thispiece then
     local testy = thispiece.y + 1
     if thispiece:can_move(thispiece.x, testy, grid_of_inert_blocks) then
