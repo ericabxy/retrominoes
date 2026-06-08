@@ -21,12 +21,19 @@ BBBF800000000002F000
 000C800000000002FFFF
 ]]
 
+local BERBASOFT_BLOCKS_WIDTH = 10
+local BERBASOFT_BLOCKS_HEIGHT = 18
+
 -- Class table.
 local grid = {
+  animation_timer = 0,
+  animation_frame = 1,
+  animation_frame_x = 1,
+  animation_frame_y = BERBASOFT_BLOCKS_HEIGHT,
   current_score = 0,
   highest_score = 0,
-  xcount = 10,
-  ycount = 18,
+  xcount = BERBASOFT_BLOCKS_WIDTH,
+  ycount = BERBASOFT_BLOCKS_HEIGHT,
   blocks = {},
 }
 
@@ -49,6 +56,25 @@ function grid:affix_piece(p)
       if thisblock then
         self.blocks[p.y + y][p.x + x] = thisblock
       end
+    end
+  end
+end
+
+function grid:animate_greyout(dt)
+  if self.animation_frame_y < 1 then return true end
+  self.animation_timer = self.animation_timer + dt * 1000
+  if self.animation_timer > 25 then
+    self.animation_timer = 0
+    if self.animation_frame_x <= self.xcount then
+      local thisblock = self.blocks[self.animation_frame_y][self.animation_frame_x]
+      if thisblock then
+        thisblock.hue = 25
+        thisblock:init()
+      end
+      self.animation_frame_x = self.animation_frame_x + 1
+    else
+      self.animation_frame_x = 1
+      self.animation_frame_y = self.animation_frame_y - 1
     end
   end
 end
@@ -100,10 +126,6 @@ function grid:draw(offset_x, offset_y)
       end
     end
   end
-end
-
-function grid:grey_out_block_at(x, y)
-  local thisblock = self.blocks[y][x]
 end
 
 function grid:is_empty_at(x, y)

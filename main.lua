@@ -16,12 +16,14 @@ local timer = 0
 local thispiece = false
 local nextpiece = sequence:new()
 local grid_of_inert_blocks = grid:new()
+local gameover = false
 
 function restart_game()
   timer = 0
   grid_of_inert_blocks = grid:new{ highest_score = math.max(grid_of_inert_blocks.highest_score, grid_of_inert_blocks.current_score) }
   thispiece = nextpiece:pop()
   ram_sound_system.start_music()
+  gameover = false
 end
 
 function love.load()
@@ -29,6 +31,8 @@ function love.load()
 end
 
 function love.update(dt)
+  -- Do greyout animation.
+  if gameover then gameover = not grid_of_inert_blocks:animate_greyout(dt) end
   -- Execute no game logic if game is not started.
   if not thispiece then return end
   -- Increment drop timer by time elapsed.
@@ -47,6 +51,7 @@ function love.update(dt)
       if not thispiece:can_move(thispiece.x, thispiece.y, grid_of_inert_blocks) then
         ram_sound_system.stop_music()
         thispiece = false
+        gameover = true
       end
     end
   end

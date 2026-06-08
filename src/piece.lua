@@ -119,7 +119,7 @@ function piece:rotate(grid)
   local testr = self.rotation - 1
   if testr < 1 then testr = #self.structures end
   if self:can_move(self.x, self.y, grid, testr) then
-    ram_sound_system:piece_rotate()
+    ram_sound_system.piece_rotate()
     self.rotation = testr
     return true
   end
