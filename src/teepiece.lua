@@ -29,7 +29,7 @@ local teepiece = piece:new{
       {' ', ' ', ' ', ' '},
     },
   },
-  hue = 15
+  hue = 13
 }
 
 function teepiece:new(o)

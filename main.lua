@@ -21,7 +21,6 @@ function restart_game()
   rom_ragnar_random_fakebit_chiptune_music_pack:bgm1(true)
   grid_of_inert_blocks = grid:new()
   hiscore = math.max(score, hiscore)
-  nextpiece = sequence:new()
   score = 0
   timer = 0
   thispiece = nextpiece:pop()

@@ -29,7 +29,7 @@ local ellpiece = piece:new{
       {' ', ' ', ' ', ' '},
     },
   },
-  hue = 7
+  hue = 6
 }
 
 function ellpiece:new(o)

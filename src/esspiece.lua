@@ -17,7 +17,7 @@ local esspiece = piece:new{
       {' ', ' ', ' ', ' '},
     },
   },
-  hue = 16
+  hue = 12
 }
 
 function esspiece:new(o)

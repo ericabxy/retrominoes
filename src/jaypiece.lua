@@ -39,7 +39,7 @@ local jaypiece = piece:new{
       {' ', ' ', ' ', ' '},
     },
   },
-  hue = 18
+  hue = 19
 }
 
 function jaypiece:new(o)

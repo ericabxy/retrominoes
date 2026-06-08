@@ -11,7 +11,7 @@ local ohhpiece = piece:new{
       {' ', ' ', ' ', ' '},
     },
   },
-  hue = 17
+  hue = 18
 }
 
 function ohhpiece:new(o)
