@@ -4,7 +4,7 @@ local scoreboard = {
   current_score = 0,
   highest_score = 0,
   x = 0,
-  y = 0
+  y = 20
 }
 
 function scoreboard:paint()

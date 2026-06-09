@@ -2,18 +2,12 @@ local rom_imagefonts = require('src.rom_imagefonts')
 local rom_sound_effects = require('src.rom_sound_effects_8_bit_style')
 local rom_ragnar_random_fakebit_chiptune_music_pack = require('src.rom_ragnar_random_fakebit_chiptune_music_pack')
 
-local CHARMAP = [[
-0BBB0
-D000C
-D000C
-0EEE0
-]]
 local bgm_enabled_string = 'MUSIC ON'
 local sfx_enabled_string = 'SOUND ON'
 local bgm_enabled = true
 local sfx_enabled = true
 
-local ram_sound_system = { x = -16, y = 192 }
+local ram_sound_system = { x = 0, y = 192 }
 
 function ram_sound_system.enable_music(b, is_playing)
   bgm_enabled = b and true or false
@@ -67,8 +61,9 @@ function ram_sound_system.draw()
 --  love.graphics.setFont(rom_imagefonts[2])
 --  love.graphics.printf(CHARMAP, ram_sound_system.x, ram_sound_system.y, 80 - 1, 'left')
   love.graphics.setFont(rom_imagefonts[1])
-  love.graphics.print(bgm_enabled_string, ram_sound_system.x + 16, ram_sound_system.y + 24)
-  love.graphics.print(sfx_enabled_string, ram_sound_system.x + 16, ram_sound_system.y + 33)
+  love.graphics.print(' SELECT ', ram_sound_system.x, ram_sound_system.y + 1)
+  love.graphics.print(bgm_enabled_string, ram_sound_system.x, ram_sound_system.y + 12)
+  love.graphics.print(sfx_enabled_string, ram_sound_system.x, ram_sound_system.y + 23)
 end
 
 return ram_sound_system

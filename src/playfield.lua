@@ -2,29 +2,10 @@ local rom_imagefonts = require('src.rom_imagefonts')
 local ram_sound_system = require('src.ram_sound_system')
 local block = require('src.block')
 
-local CLEARVALUES = { 200, 400, 800, 1600 }
-local CHARMAP = [[
-000C8000000000020000
-000C8000000000020000
-000C8000000000020000
-EEEF8000000000020000
-FFFF8000000000020000
-FFFF8000000000020000
-FFFF8000000000020000
-FFFF8000000000020000
-FFFF800000000002F00F
-FFFF800000000002FFFF
-FFFF800000000002FFFF
-FFFF800000000002FFFF
-BBBF800000000002F000
-000C800000000002F000
-000C800000000002FFFF
-]]
-
 local BACKGROUND_COLOR = { 27, 38, 50 }
 local FOREGROUND_COLOR = { 255, 255, 255 }
 local LINE_WIDTH = 8
-local NUMBER_OF_LINES = 15
+local NUMBER_OF_LINES = 14
 
 -- Class table.
 local playfield = {
@@ -119,8 +100,8 @@ end
 function playfield:paint()
   --love.graphics.setFont(rom_imagefonts[2])
   --love.graphics.printf(CHARMAP, 0, 0, 319, 'left')
-  love.graphics.setColor(BACKGROUND_COLOR)
-  love.graphics.rectangle('fill', self.xpos * 16, self.ypos * 16, self.n_width * 16, self.n_lines * 16)
+  --love.graphics.setColor(BACKGROUND_COLOR)
+  --love.graphics.rectangle('fill', self.xpos * 16, self.ypos * 16, self.n_width * 16, self.n_lines * 16)
   love.graphics.setColor(FOREGROUND_COLOR)
   for y = 1, self.n_lines do
     for x = 1, self.n_width do

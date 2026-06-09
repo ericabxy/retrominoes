@@ -12,36 +12,43 @@ local polyomino = require('src.polyomino')
 local eyepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_I,
   structures = berbasoft_i,
+  hue = 8
 }
 local ohhpiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_O,
   structures = berbasoft_o,
+  hue = 18
 }
 local jaypiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_J,
   structures = berbasoft_j,
+  hue = 19
 }
 local ellpiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_L,
   structures = berbasoft_l,
+  hue = 1
 }
 local teepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_T,
   structures = berbasoft_t,
+  hue = 13
 }
 local esspiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_S,
   structures = berbasoft_s,
+  hue = 12
 }
 local zeepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_Z,
   structures = berbasoft_z,
+  hue = 2
 }
 
 local random_bag = {
   pieces = {},
-  x = 0,
-  y = 0,
+  x = 264,
+  y = 20,
 }
 
 function random_bag:init()
@@ -57,10 +64,10 @@ end
 
 function random_bag:paint()
   love.graphics.setFont(rom_imagefonts[1])
-  love.graphics.print('NEXT', self.x + 20, self.y + 16)
-  for x = #self.pieces, 1, -1 do
-    local y = (#self.pieces - x) * 16
-    self.pieces[x]:paint_icon(self.x + 24, self.y + 28 + y)
+  love.graphics.print('NEXT', self.x + 4, self.y)
+  for x, nextpiece in ipairs(self.pieces) do
+    local y = 12 + (#self.pieces * 16) - (x * 16)
+    nextpiece:paint_icon(self.x + 8, self.y + y)
   end
 end
 

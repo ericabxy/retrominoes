@@ -4,7 +4,6 @@ local block = require('src.block')
 local EMPTY = ' '
 
 local polyomino = {
-  rotation = 1,
   structures = {
     {
       {' ', ' ', ' ', ' '},
@@ -19,12 +18,13 @@ local polyomino = {
       {' ', ' ', ' ', ' '},
     },
   },
+  rotation = 1,
   n_lines = 4,
   n_width = 4,
-  x = 8,
-  y = 0,
-  hue = 1,
   value = 0,  -- Bonus points to score when this polyomino lands successfully.
+  hue = 1,
+  x = 8,
+  y = 1,
 }
 
 function polyomino:can_move(test_x, test_y, grid, r)
