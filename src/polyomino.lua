@@ -3,7 +3,7 @@ local block = require('src.block')
 
 local EMPTY = ' '
 
-local piece = {
+local polyomino = {
   rotation = 1,
   structures = {
     {
@@ -21,12 +21,13 @@ local piece = {
   },
   n_lines = 4,
   n_width = 4,
-  x = 3,
-  y = 2,
+  x = 8,
+  y = 0,
   hue = 1,
+  value = 0,  -- Bonus points to score when this polyomino lands successfully.
 }
 
-function piece:can_move(test_x, test_y, grid, r)
+function polyomino:can_move(test_x, test_y, grid, r)
   r = r or self.rotation
   for y = 1, #self.structures[r] do
     for x = 1, #self.structures[r][y] do
@@ -40,21 +41,7 @@ function piece:can_move(test_x, test_y, grid, r)
   return true
 end
 
-function piece:draw(offset_x, offset_y)
-  for y = 1, #self.structures[self.rotation] do
-    for x = 1, #self.structures[self.rotation][y] do
-      local thisblock = block:new{
-        letter = self.structures[self.rotation][y][x],
-        hue = self.hue
-      }
-      if thisblock.letter ~= ' ' then
-        thisblock:draw(x + self.x + offset_x, y + self.y + offset_y)
-      end
-    end
-  end
-end
-
-function piece:drop_one_row(grid)
+function polyomino:drop_one_row(grid)
   local testy = self.y + 1
   if self:can_move(self.x, testy, grid) then
     self.y = testy
@@ -62,12 +49,12 @@ function piece:drop_one_row(grid)
   end
 end
 
-function piece:get_block_at(x, y)
+function polyomino:get_block_at(x, y)
   if self.structures[self.rotation][y][x] == ' ' then return end
   return block:new{ letter = self.structures[self.rotation][y][x], hue = self.hue }
 end
 
-function piece:move_down(grid)
+function polyomino:move_down(grid)
   local testy = self.y + 1
   if self:can_move(self.x, testy, grid) then
     self.y = testy
@@ -75,7 +62,7 @@ function piece:move_down(grid)
   end
 end
 
-function piece:move_left(grid)
+function polyomino:move_left(grid)
   local testx = self.x - 1
   if self:can_move(self.x - 1, self.y, grid) then
     self.x = self.x - 1
@@ -83,14 +70,28 @@ function piece:move_left(grid)
   end
 end
 
-function piece:move_right(grid)
+function polyomino:move_right(grid)
   if self:can_move(self.x + 1, self.y, grid) then
     self.x = self.x + 1
     return true
   end
 end
 
-function piece:paint_icon(ox, oy)
+function polyomino:paint()
+  for y = 1, #self.structures[self.rotation] do
+    for x = 1, #self.structures[self.rotation][y] do
+      local thisblock = block:new{
+        letter = self.structures[self.rotation][y][x],
+        hue = self.hue
+      }
+      if thisblock.letter ~= ' ' then
+        thisblock:draw(x + self.x, y + self.y)
+      end
+    end
+  end
+end
+
+function polyomino:paint_icon(ox, oy)
   ox, oy = ox or 0, oy or 0
   for y = 1, #self.structures[self.rotation] do
     for x = 1, #self.structures[self.rotation][y] do
@@ -104,32 +105,32 @@ function piece:paint_icon(ox, oy)
 end
 
 -- Rotate counterclockwise (widderschynnes).
-function piece:reverse(grid)
+function polyomino:reverse(grid)
   local testr = self.rotation + 1
   if testr > #self.structures then testr = 1 end
   if self:can_move(self.x, self.y, grid, testr) then
-    ram_sound_system.piece_rotate()
+    ram_sound_system.sfx_rotate()
     self.rotation = testr
     return true
   end
 end
 
 -- Rotate clockwise (deosil).
-function piece:rotate(grid)
+function polyomino:rotate(grid)
   local testr = self.rotation - 1
   if testr < 1 then testr = #self.structures end
   if self:can_move(self.x, self.y, grid, testr) then
-    ram_sound_system.piece_rotate()
+    ram_sound_system.sfx_rotate()
     self.rotation = testr
     return true
   end
 end
 
-function piece:new(o)
+function polyomino:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
-return piece
+return polyomino

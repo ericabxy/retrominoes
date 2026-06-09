@@ -47,7 +47,7 @@ function ram_sound_system.line_clear()
   if sfx_enabled and not rom_sound_effects.sound_neutral11:isPlaying() then love.audio.play(rom_sound_effects.sound_neutral11) end
 end
 
-function ram_sound_system.piece_rotate()
+function ram_sound_system.sfx_rotate()
   if sfx_enabled and not rom_sound_effects.sound_neutral8:isPlaying() then love.audio.play(rom_sound_effects.sound_neutral8) end
 end
 
@@ -64,8 +64,8 @@ function ram_sound_system.toggle_settings(is_playing)
 end
 
 function ram_sound_system.draw()
-  love.graphics.setFont(rom_imagefonts[2])
-  love.graphics.printf(CHARMAP, ram_sound_system.x, ram_sound_system.y, 80 - 1, 'left')
+--  love.graphics.setFont(rom_imagefonts[2])
+--  love.graphics.printf(CHARMAP, ram_sound_system.x, ram_sound_system.y, 80 - 1, 'left')
   love.graphics.setFont(rom_imagefonts[1])
   love.graphics.print(bgm_enabled_string, ram_sound_system.x + 16, ram_sound_system.y + 24)
   love.graphics.print(sfx_enabled_string, ram_sound_system.x + 16, ram_sound_system.y + 33)

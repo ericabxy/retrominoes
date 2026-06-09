@@ -8,57 +8,43 @@ local berbasoft_t = require('src.berbasoft_t')
 local berbasoft_s = require('src.berbasoft_s')
 local berbasoft_z = require('src.berbasoft_z')
 local polyomino = require('src.polyomino')
-local piece = require('src.piece')
 
-local eyepiece = piece:new{
+local eyepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_I,
   structures = berbasoft_i,
 }
-local ohhpiece = piece:new{
+local ohhpiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_O,
   structures = berbasoft_o,
 }
-local jaypiece = piece:new{
+local jaypiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_J,
   structures = berbasoft_j,
 }
-local ellpiece = piece:new{
+local ellpiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_L,
   structures = berbasoft_l,
 }
-local teepiece = piece:new{
+local teepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_T,
   structures = berbasoft_t,
 }
-local esspiece = piece:new{
+local esspiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_S,
   structures = berbasoft_s,
 }
-local zeepiece = piece:new{
+local zeepiece = polyomino:new{
   color = BERBASOFT_BLOCKS_COLOR_NAME_Z,
   structures = berbasoft_z,
 }
 
-local CHARMAP = [[
-0BB0
-D00C
-D00C
-D00C
-D00C
-D00C
-D00C
-D00C
-D00C
-0EE0
-]]
-
-local bag = {
+local random_bag = {
   pieces = {},
-  x = 256,
-  y = -16,
+  x = 0,
+  y = 0,
 }
 
-function bag:init()
+function random_bag:init()
   self.pieces = {}
   for i = 1, 7 do
     local position = love.math.random(#self.pieces + 1)  -- Randomize insert position.
@@ -69,9 +55,7 @@ function bag:init()
   return self
 end
 
-function bag:paint()
-  love.graphics.setFont(rom_imagefonts[2])
-  love.graphics.printf(CHARMAP, self.x, self.y, 64 - 1, 'left')
+function random_bag:paint()
   love.graphics.setFont(rom_imagefonts[1])
   love.graphics.print('NEXT', self.x + 20, self.y + 16)
   for x = #self.pieces, 1, -1 do
@@ -80,7 +64,7 @@ function bag:paint()
   end
 end
 
-function bag:pop()
+function random_bag:pop()
   local newpiece = table.remove(self.pieces)
   if #self.pieces == 0 then
     self:init()
@@ -88,18 +72,18 @@ function bag:pop()
   return newpiece
 end
 
-function bag:rotate_queue(n)
+function random_bag:rotate_queue(n)
   for i = 1, n do
     local pop = table.remove(self.pieces)
     table.insert(self.pieces, 1, pop)
   end
 end
 
-function bag:new(o)
+function random_bag:new(o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
   return o:init()
 end
 
-return bag
+return random_bag

@@ -40,7 +40,7 @@ function piece:can_move(test_x, test_y, grid, r)
   return true
 end
 
-function piece:draw(offset_x, offset_y)
+function piece:draw()
   for y = 1, #self.structures[self.rotation] do
     for x = 1, #self.structures[self.rotation][y] do
       local thisblock = block:new{

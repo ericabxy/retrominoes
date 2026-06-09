@@ -4,33 +4,33 @@ local ram_sound_system = require('src.ram_sound_system')
 local rom_imagefonts = require('src.rom_imagefonts')
 local block = require('src.block')
 local playfield = require('src.playfield')
-local bag = require('src.bag')
+local random_bag = require('src.random_bag')
+local scoreboard = require('src.scoreboard')
 
 local CONTROLLER_NUMBER = 1
 local TIMER_LIMIT = 0.5
-local player_settings_music = true
-local player_settings_music_string = 'ON'
-local player_settings_sound = true
-local player_settings_sound_string = 'ON'
 local timer = 0
 local thispiece = false
-local nextpiece = bag:new()
+local nextpiece = random_bag:new()
 local playfield0 = playfield:new()
+local score0 = scoreboard:new()
 local gameover = false
 
 function restart_game()
   timer = 0
-  playfield0 = playfield:new{ highest_score = math.max(playfield0.highest_score, playfield0.current_score) }
+  playfield0 = playfield:new()
+  score0.highest_score = math.max(score0.highest_score, score0.current_score)
   thispiece = nextpiece:pop()
   ram_sound_system.start_music()
   gameover = false
 end
 
 function love.load()
-  love.graphics.setBackgroundColor(27, 38, 50)
+  --love.graphics.setBackgroundColor(27, 38, 50)
 end
 
 function love.update(dt)
+  local soft_drop = false
   -- Do greyout animation.
   if gameover then gameover = not playfield0:animate_greyout(dt) end
   -- Execute no game logic if game is not started.
@@ -40,12 +40,14 @@ function love.update(dt)
   -- Speed up timer if DOWN button is held.
   if love.joystick.isDown(CONTROLLER_NUMBER, RETRO_DEVICE_ID_JOYPAD_DOWN) then
     timer = timer + dt * 5
+    soft_drop = true
   end
   if timer >= TIMER_LIMIT then
     timer = 0
-    
+    if soft_drop then thispiece.value = thispiece.value + 10 end
     if not thispiece:drop_one_row(playfield0) then
       ram_sound_system.piece_drop()
+      score0.current_score = score0.current_score + thispiece.value
       playfield0:affix_piece(thispiece)
       thispiece = nextpiece:pop()
       if not thispiece:can_move(thispiece.x, thispiece.y, playfield0) then
@@ -55,16 +57,15 @@ function love.update(dt)
       end
     end
   end
-  playfield0:clear_completed_rows()
+  local points = playfield0:clear_lines()
+  if points then score0.current_score = score0.current_score + points end
 end
 
 function love.draw()
-  love.graphics.setColor(255, 255, 255)
-  playfield0:draw(5, -3)
-  if thispiece then thispiece:draw(5, -3) end
-  nextpiece:paint(280, 12)
-  love.graphics.setFont(rom_imagefonts[1])
-  love.graphics.print('L   R', 274, 16)
+  playfield0:paint()
+  if thispiece then thispiece:paint(5, -3) end
+  --nextpiece:paint(280, 12)
+  score0:paint()
   ram_sound_system.draw()
 end
 
