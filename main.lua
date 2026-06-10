@@ -10,8 +10,8 @@ local scoreboard = require('src.scoreboard')
 
 local CONTROLLER_NUMBER = 1
 local FRAMERATE = 1 / 60
-local GRAVITY = .0156
-local SOFTDROP = .47
+local GRAVITY = .015
+local SOFTDROP = .35
 local timer = 0
 local thispiece = false
 local nextpiece = random_bag:new()
@@ -24,8 +24,8 @@ function restart_game()
   playfield0 = playfield:new()
   score0.highest_score = math.max(score0.highest_score, score0.current_score)
   score0.current_score = 0
-  thispiece = nextpiece:pop()
   nextpiece = random_bag:new()
+  thispiece = nextpiece:pop()
   ram_sound_system.start_music()
   gameover = false
 end
@@ -56,6 +56,7 @@ function love.update(dt)
       playfield0:affix_piece(thispiece)
       thispiece = nextpiece:pop()
       if not thispiece:can_move(thispiece.x, thispiece.y, playfield0) then
+        playfield0:affix_piece(thispiece)
         ram_sound_system.stop_music()
         thispiece = false
         gameover = true
